@@ -1,70 +1,107 @@
-<script>
-  // Список видео (относительные пути, если страница на GitHub Pages)
-  const videos = [
-    'videos/myvideo.mp4',
-    'videos/video2.mp4',
-    'videos/video3.mp4'
-  ];
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Случайные видео + Часы</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
 
-  function playRandomVideo() {
-    // Создаём элемент <video>
-    const video = document.createElement('video');
-    video.controls = false;
-    video.muted = true; // часто нужно для автовоспроизведения
-    video.loop = false;
-    video.style.position = 'fixed';
-    video.style.top = '0';
-    video.style.left = '0';
-    video.style.width = '100%';
-    video.style.height = '100%';
-    video.style.zIndex = '10000';
-    video.style.objectFit = 'cover';
+    #clock {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
 
-    // Выбираем случайное видео
-    const randomVideo = videos[Math.floor(Math.random() * videos.length)];
-    const fullUrl = new URL(randomVideo, window.location.origin).href;
-    video.src = fullUrl;
+  <!-- Элемент для отображения московского времени -->
+  <div id="clock">--:--:--</div>
 
-    // Добавляем на страницу
-    document.body.appendChild(video);
+  <script>
+    // Список видео (относительные пути, если страница на GitHub Pages)
+    const videos = [
+      'videos/myvideo.mp4',
+      'videos/video2.mp4',
+      'videos/video3.mp4'
+    ];
 
-    // Воспроизводим
-    video.play().catch(e => console.warn("Автовоспроизведение заблокировано:", e));
+    function playRandomVideo() {
+      // Создаём элемент <video>
+      const video = document.createElement('video');
+      video.controls = false;
+      video.muted = true; // часто нужно для автовоспроизведения
+      video.loop = false;
+      video.style.position = 'fixed';
+      video.style.top = '0';
+      video.style.left = '0';
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.zIndex = '10000';
+      video.style.objectFit = 'cover';
 
-    // Удаляем после завершения
-    video.onended = () => {
-      document.body.removeChild(video);
-    };
-  }
+      // Выбираем случайное видео
+      const randomVideo = videos[Math.floor(Math.random() * videos.length)];
+      const fullUrl = new URL(randomVideo, window.location.origin).href;
+      video.src = fullUrl;
 
-  function scheduleNextVideo() {
-    // Случайное время от 15 до 60 минут → в миллисекундах
-    const min = 15 * 60 * 1000; // 15 минут
-    const max = 60 * 60 * 1000; // 60 минут
-    const delay = Math.floor(Math.random() * (max - min + 1)) + min;
+      // Добавляем на страницу
+      document.body.appendChild(video);
 
-    setTimeout(() => {
-      playRandomVideo();
-      scheduleNextVideo(); // рекурсивно запускаем следующий
-    }, delay);
-  }
+      // Воспроизводим
+      video.play().catch(e => console.warn("Автовоспроизведение заблокировано:", e));
 
-  // Запускаем первый раз через 15–60 минут
-  scheduleNextVideo();
+      // Удаляем после завершения
+      video.onended = () => {
+        document.body.removeChild(video);
+      };
+    }
 
-  // --- Часы (ваш существующий код) ---
-  function updateMoscowTime() {
-    const now = new Date();
-    const options = {
-      timeZone: 'Europe/Moscow',
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    };
-    const moscowTime = new Intl.DateTimeFormat('ru-RU', options).format(now);
-    document.getElementById('clock').textContent = moscowTime;
-  }
-  updateMoscowTime();
-  setInterval(updateMoscowTime, 1000);
-</script>
+    function scheduleNextVideo() {
+      // Случайное время от 15 до 60 минут → в миллисекундах
+      const min = 15 * 60 * 1000; // 15 минут
+      const max = 60 * 60 * 1000; // 60 минут
+      const delay = Math.floor(Math.random() * (max - min + 1)) + min;
+
+      setTimeout(() => {
+        playRandomVideo();
+        scheduleNextVideo(); // рекурсивно запускаем следующий
+      }, delay);
+    }
+
+    // Запускаем первый раз через 15–60 минут
+    scheduleNextVideo();
+
+    // --- Часы (Московское время) ---
+    function updateMoscowTime() {
+      const now = new Date();
+      const options = {
+        timeZone: 'Europe/Moscow',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      };
+      const moscowTime = new Intl.DateTimeFormat('ru-RU', options).format(now);
+      document.getElementById('clock').textContent = moscowTime;
+    }
+
+    updateMoscowTime();
+    setInterval(updateMoscowTime, 1000);
+  </script>
+
+</body>
+</html>
