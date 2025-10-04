@@ -3,38 +3,154 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Случайные видео + Часы</title>
+  <title>Фиолетовые Тапки Новости</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'Arial', sans-serif;
-      /* Градиент от фиолетового к чёрному сверху вниз */
       background: linear-gradient(to bottom, #8A2BE2, #000000);
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      color: white;
     }
 
     #clock {
-      font-size: 96px; /* Примерно в 4 раза больше стандартного (24px → 96px) */
+      font-size: 96px;
       font-weight: bold;
       color: white;
-      text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
       z-index: 9999;
       text-align: center;
+      position: relative;
+    }
+
+    /* Бегущая строка */
+    #news-ticker-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 12px 0;
+      box-shadow: 0 -2px 15px rgba(138, 43, 226, 0.4);
+      z-index: 9998;
+      overflow: hidden;
+    }
+
+    #news-ticker {
+      display: inline-block;
+      white-space: nowrap;
+      font-size: 22px;
+      color: #e0ccff;
+      font-weight: bold;
+      animation: scroll-left 40s linear infinite;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
     }
   </style>
 </head>
 <body>
 
-  <!-- Центральные часы -->
   <div id="clock">--:--:--</div>
 
+  <div id="news-ticker-container">
+    <div id="news-ticker">Загрузка новостей...</div>
+  </div>
+
   <script>
-    // Список видео (относительные пути)
+    // === Генератор "новостей от Gemini-2.0-Flash" ===
+    function generateAbsurdNews() {
+      const subjects = [
+        "Фиолетовые тапки",
+        "Пара фиолетовых тапок",
+        "Тапки цвета космического заката",
+        "Магические фиолетовые шлёпанцы",
+        "Интеллектуальные тапки с ИИ",
+        "Фиолетовые тапки из будущего"
+      ];
+
+      const verbs = [
+        "объявили войну",
+        "вступили в переговоры с",
+        "похитили",
+        "научились управлять",
+        "открыли секреты",
+        "подали иск против",
+        "запустили стартап по",
+        "начали транслировать мысли",
+        "стали мэром",
+        "внедрились в правительство"
+      ];
+
+      const objects = [
+        "обычным носкам",
+        "мировым правительствам",
+        "котами",
+        "интернетом",
+        "погодой",
+        "кофемашинами",
+        "спутниками Starlink",
+        "МКС",
+        "алгоритмами TikTok",
+        "Гугл-переводчиком"
+      ];
+
+      const locations = [
+        "в Подмосковье",
+        "на Марсе",
+        "в супермаркете 'Пятёрочка'",
+        "в Цюрихе",
+        "у вас дома",
+        "в подвале у бабушки",
+        "в штаб-квартире ООН",
+        "на дне океана"
+      ];
+
+      const absurdDetails = [
+        "после того как научились готовить пельмени",
+        "благодаря хз чему",
+        "в рамках борьбы за права обуви",
+        "после получения докторской степени в MIT",
+        "после того как начали вещать на FM-волне",
+        "в ответ на повышение цен на носки"
+      ];
+
+      const subject = subjects[Math.floor(Math.random() * subjects.length)];
+      const verb = verbs[Math.floor(Math.random() * verbs.length)];
+      const object = objects[Math.floor(Math.random() * objects.length)];
+      const location = locations[Math.floor(Math.random() * locations.length)];
+      const detail = absurdDetails[Math.floor(Math.random() * absurdDetails.length)];
+
+      return `Gemini-2.0-Flash сообщает: ${subject} ${verb} ${object} ${location} ${detail}!`;
+    }
+
+    // Генерируем новость при загрузке
+    document.getElementById('news-ticker').textContent = generateAbsurdNews();
+
+    // === Часы по Московскому времени ===
+    function updateMoscowTime() {
+      const now = new Date();
+      const options = {
+        timeZone: 'Europe/Moscow',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      };
+      const moscowTime = new Intl.DateTimeFormat('ru-RU', options).format(now);
+      document.getElementById('clock').textContent = moscowTime;
+    }
+    updateMoscowTime();
+    setInterval(updateMoscowTime, 1000);
+
+    // === Видео каждые 15–60 минут ===
     const videos = [
       'videos/myvideo.mp4',
       'videos/video2.mp4',
@@ -55,8 +171,7 @@
       video.style.objectFit = 'cover';
 
       const randomVideo = videos[Math.floor(Math.random() * videos.length)];
-      const fullUrl = new URL(randomVideo, window.location.origin).href;
-      video.src = fullUrl;
+      video.src = new URL(randomVideo, window.location.origin).href;
 
       document.body.appendChild(video);
 
@@ -68,8 +183,8 @@
     }
 
     function scheduleNextVideo() {
-      const min = 15 * 60 * 1000; // 15 минут
-      const max = 60 * 60 * 1000; // 60 минут
+      const min = 15 * 60 * 1000;
+      const max = 60 * 60 * 1000;
       const delay = Math.floor(Math.random() * (max - min + 1)) + min;
 
       setTimeout(() => {
@@ -78,25 +193,7 @@
       }, delay);
     }
 
-    // Запускаем первый таймер
     scheduleNextVideo();
-
-    // --- Часы по Московскому времени ---
-    function updateMoscowTime() {
-      const now = new Date();
-      const options = {
-        timeZone: 'Europe/Moscow',
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      };
-      const moscowTime = new Intl.DateTimeFormat('ru-RU', options).format(now);
-      document.getElementById('clock').textContent = moscowTime;
-    }
-
-    updateMoscowTime();
-    setInterval(updateMoscowTime, 1000);
   </script>
 
 </body>
