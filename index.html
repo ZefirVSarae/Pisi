@@ -7,32 +7,34 @@
   <style>
     body {
       margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      /* Градиент от фиолетового к чёрному сверху вниз */
+      background: linear-gradient(to bottom, #8A2BE2, #000000);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
     }
 
     #clock {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      font-size: 24px;
+      font-size: 96px; /* Примерно в 4 раза больше стандартного (24px → 96px) */
       font-weight: bold;
-      background: rgba(0, 0, 0, 0.7);
       color: white;
-      padding: 10px 15px;
-      border-radius: 8px;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
       z-index: 9999;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <!-- Элемент для отображения московского времени -->
+  <!-- Центральные часы -->
   <div id="clock">--:--:--</div>
 
   <script>
-    // Список видео (относительные пути, если страница на GitHub Pages)
+    // Список видео (относительные пути)
     const videos = [
       'videos/myvideo.mp4',
       'videos/video2.mp4',
@@ -40,10 +42,9 @@
     ];
 
     function playRandomVideo() {
-      // Создаём элемент <video>
       const video = document.createElement('video');
       video.controls = false;
-      video.muted = true; // часто нужно для автовоспроизведения
+      video.muted = true;
       video.loop = false;
       video.style.position = 'fixed';
       video.style.top = '0';
@@ -53,39 +54,34 @@
       video.style.zIndex = '10000';
       video.style.objectFit = 'cover';
 
-      // Выбираем случайное видео
       const randomVideo = videos[Math.floor(Math.random() * videos.length)];
       const fullUrl = new URL(randomVideo, window.location.origin).href;
       video.src = fullUrl;
 
-      // Добавляем на страницу
       document.body.appendChild(video);
 
-      // Воспроизводим
       video.play().catch(e => console.warn("Автовоспроизведение заблокировано:", e));
 
-      // Удаляем после завершения
       video.onended = () => {
         document.body.removeChild(video);
       };
     }
 
     function scheduleNextVideo() {
-      // Случайное время от 15 до 60 минут → в миллисекундах
       const min = 15 * 60 * 1000; // 15 минут
       const max = 60 * 60 * 1000; // 60 минут
       const delay = Math.floor(Math.random() * (max - min + 1)) + min;
 
       setTimeout(() => {
         playRandomVideo();
-        scheduleNextVideo(); // рекурсивно запускаем следующий
+        scheduleNextVideo();
       }, delay);
     }
 
-    // Запускаем первый раз через 15–60 минут
+    // Запускаем первый таймер
     scheduleNextVideo();
 
-    // --- Часы (Московское время) ---
+    // --- Часы по Московскому времени ---
     function updateMoscowTime() {
       const now = new Date();
       const options = {
