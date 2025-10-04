@@ -1,53 +1,70 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HareTV</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          backgroundImage: {
-            'gradient-to-b': 'linear-gradient(to bottom, #9333ea, #7e22ce)',
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    body {
-      background: linear-gradient(to bottom, #9333ea, #7e22ce);
-    }
-  </style>
-</head>
-<body class="w-full h-screen flex items-center justify-center p-4">
-  <div class="bg-purple-800 rounded-3xl px-8 py-6 shadow-lg backdrop-blur-sm">
-    <h1 id="clock" class="text-white text-8xl font-bold tracking-wider text-center">
-      --:--:--
-    </h1>
-  </div>
+<script>
+  // Список видео (относительные пути, если страница на GitHub Pages)
+  const videos = [
+    'videos/video1.mp4',
+    'videos/video2.mp4',
+    'videos/video3.mp4'
+  ];
 
-  <script>
-    function updateMoscowTime() {
-      const now = new Date();
-      const options = {
-        timeZone: 'Europe/Moscow',
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      };
-      const moscowTime = new Intl.DateTimeFormat('ru-RU', options).format(now);
-      document.getElementById('clock').textContent = moscowTime;
-    }
+  function playRandomVideo() {
+    // Создаём элемент <video>
+    const video = document.createElement('video');
+    video.controls = false;
+    video.muted = true; // часто нужно для автовоспроизведения
+    video.loop = false;
+    video.style.position = 'fixed';
+    video.style.top = '0';
+    video.style.left = '0';
+    video.style.width = '100%';
+    video.style.height = '100%';
+    video.style.zIndex = '10000';
+    video.style.objectFit = 'cover';
 
-    // Обновить сразу
-    updateMoscowTime();
+    // Выбираем случайное видео
+    const randomVideo = videos[Math.floor(Math.random() * videos.length)];
+    const fullUrl = new URL(randomVideo, window.location.origin).href;
+    video.src = fullUrl;
 
-    // Обновлять каждую секунду
-    setInterval(updateMoscowTime, 1000);
-  </script>
-</body>
-</html>
+    // Добавляем на страницу
+    document.body.appendChild(video);
+
+    // Воспроизводим
+    video.play().catch(e => console.warn("Автовоспроизведение заблокировано:", e));
+
+    // Удаляем после завершения
+    video.onended = () => {
+      document.body.removeChild(video);
+    };
+  }
+
+  function scheduleNextVideo() {
+    // Случайное время от 15 до 60 минут → в миллисекундах
+    const min = 15 * 60 * 1000; // 15 минут
+    const max = 60 * 60 * 1000; // 60 минут
+    const delay = Math.floor(Math.random() * (max - min + 1)) + min;
+
+    setTimeout(() => {
+      playRandomVideo();
+      scheduleNextVideo(); // рекурсивно запускаем следующий
+    }, delay);
+  }
+
+  // Запускаем первый раз через 15–60 минут
+  scheduleNextVideo();
+
+  // --- Часы (ваш существующий код) ---
+  function updateMoscowTime() {
+    const now = new Date();
+    const options = {
+      timeZone: 'Europe/Moscow',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+    const moscowTime = new Intl.DateTimeFormat('ru-RU', options).format(now);
+    document.getElementById('clock').textContent = moscowTime;
+  }
+  updateMoscowTime();
+  setInterval(updateMoscowTime, 1000);
+</script>
