@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HareTV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          backgroundImage: {
+            'gradient-to-b': 'linear-gradient(to bottom, #9333ea, #7e22ce)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #9333ea, #7e22ce);
+    }
+  </style>
+</head>
+<body class="w-full h-screen flex items-center justify-center p-4">
+  <div class="bg-purple-800 rounded-3xl px-8 py-6 shadow-lg backdrop-blur-sm">
+    <h1 id="clock" class="text-white text-8xl font-bold tracking-wider text-center">
+      --:--:--
+    </h1>
+  </div>
+
+  <script>
+    function updateMoscowTime() {
+      const now = new Date();
+      const options = {
+        timeZone: 'Europe/Moscow',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      };
+      const moscowTime = new Intl.DateTimeFormat('ru-RU', options).format(now);
+      document.getElementById('clock').textContent = moscowTime;
+    }
+
+    // Обновить сразу
+    updateMoscowTime();
+
+    // Обновлять каждую секунду
+    setInterval(updateMoscowTime, 1000);
+  </script>
+</body>
+</html>
