@@ -1,199 +1,167 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Фиолетовые Тапки Новости</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to bottom, #8A2BE2, #000000);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      color: white;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таймер со Скрытым Видео (Случайный Выбор)</title>
+    <!-- Загрузка Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Стиль для эффекта свечения, как на вашем изображении */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.1em;
+        }
 
-    #clock {
-      font-size: 96px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-      z-index: 9999;
-      text-align: center;
-      position: relative;
-    }
-
-    /* Бегущая строка */
-    #news-ticker-container {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      padding: 12px 0;
-      box-shadow: 0 -2px 15px rgba(138, 43, 226, 0.4);
-      z-index: 9998;
-      overflow: hidden;
-    }
-
-    #news-ticker {
-      display: inline-block;
-      white-space: nowrap;
-      font-size: 22px;
-      color: #e0ccff;
-      font-weight: bold;
-      animation: scroll-left 40s linear infinite;
-    }
-
-    @keyframes scroll-left {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-  </style>
+        /* Фиолетовый градиентный фон */
+        .purple-gradient {
+            background: radial-gradient(circle at center, #8a2be2 0%, #4b0082 100%);
+        }
+    </style>
 </head>
-<body>
+<body class="purple-gradient min-h-screen flex flex-col items-center justify-center p-4 relative">
 
-  <div id="clock">--:--:--</div>
+    <!-- Скрытый контейнер для видео. Занимает весь экран. -->
+    <!-- Класс 'hidden' скрывает его по умолчанию -->
+    <div id="video-container" 
+         class="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black z-10 hidden">
+        
+        <!-- Видео элемент: controls убраны, чтобы не было видно элементов управления. -->
+        <!-- object-cover и w-full h-full гарантируют, что видео займет весь экран. -->
+        <!-- Атрибут 'src' будет установлен динамически через JavaScript -->
+        <video id="secret-video" 
+               class="object-cover w-full h-full" 
+               playsinline 
+               type="video/mp4">
+            Ваш браузер не поддерживает тег video.
+        </video>
+        
+    </div>
 
-  <div id="news-ticker-container">
-    <div id="news-ticker">Загрузка новостей...</div>
-  </div>
+    <!-- Главный контейнер для часов -->
+    <div id="clock-container" class="text-center transition-opacity duration-300 z-0">
+        <!-- Цифровые часы -->
+        <div id="clock" class="glow-text text-white text-6xl sm:text-8xl md:text-9xl font-bold">
+            00:00:00
+        </div>
 
-  <script>
-    // === Генератор "новостей от Gemini-2.0-Flash" ===
-    function generateAbsurdNews() {
-      const subjects = [
-        "Фиолетовые тапки",
-        "Пара фиолетовых тапок",
-        "Тапки цвета космического заката",
-        "Магические фиолетовые шлёпанцы",
-        "Интеллектуальные тапки с ИИ",
-        "Фиолетовые тапки из будущего"
-      ];
+        <!-- Невидимая кнопка / Область нажатия -->
+        <div id="hidden-button" 
+             class="w-full max-w-lg h-24 mt-8 cursor-pointer" 
+             onclick="showVideo()">
+        </div>
+    </div>
 
-      const verbs = [
-        "объявили войну",
-        "вступили в переговоры с",
-        "похитили",
-        "научились управлять",
-        "открыли секреты",
-        "подали иск против",
-        "запустили стартап по",
-        "начали транслировать мысли",
-        "стали мэром",
-        "внедрились в правительство"
-      ];
+    <script>
+        // Глобальные переменные
+        // Список всех видео. Все ссылки модифицированы на dl=1 для прямого воспроизведения.
+        const VIDEO_SOURCES = [
+            // Исходное видео
+            "https://www.dropbox.com/scl/fi/6a7evfakclrrkpatretee/purple-hare-1-season.mp4?rlkey=ehmtfjlo8nwdo4lsz9lmiy1fn&st=utaco1y4&dl=1",
+            // Новые видео
+            "https://www.dropbox.com/scl/fi/yzegvcel7xu19t8f3dbpb/Purple-Hare-13.mp4?rlkey=7gntat0h9x8uwburs5k3ykyxz&st=298s8mod&dl=1",
+            "https://www.dropbox.com/scl/fi/o55jndrit09yyywny5y28/purple-hare-10.mp4?rlkey=mbt1tx08ik1zlk9224u0rmyqc&st=r5t714oo&dl=1",
+            "https://www.dropbox.com/scl/fi/0uvbqjkmlb1y5q2rop41i/Purple-Hare-15.mp4?rlkey=jkw28zo6x5mls22kdp8lmpyrl&st=1if6yudd&dl=1",
+            "https://www.dropbox.com/scl/fi/naz5jyqtosyznb2yt19b6/purple-hare-7.mp4?rlkey=6trhwzw8guubkgfy8nf97kesf&st=qnp5sauf&dl=1"
+        ];
+        
+        // Если вы хотите, чтобы после видео происходило перенаправление на другую внешнюю страницу,
+        // измените значение этой переменной на нужный URL и раскомментируйте соответствующую строку в функции handleVideoEnd.
+        const REDIRECT_AFTER_VIDEO = ""; // Здесь можно указать другой URL, например, "https://example.com"
+        
+        const clockElement = document.getElementById('clock');
+        const clockContainer = document.getElementById('clock-container');
+        const videoContainer = document.getElementById('video-container');
+        const secretVideo = document.getElementById('secret-video');
+        const hiddenButton = document.getElementById('hidden-button');
+        
+        // Стилизуем невидимую кнопку через JS, чтобы она была невидимой, но кликабельной
+        hiddenButton.style.opacity = 0;
 
-      const objects = [
-        "обычным носкам",
-        "мировым правительствам",
-        "котами",
-        "интернетом",
-        "погодой",
-        "кофемашинами",
-        "спутниками Starlink",
-        "МКС",
-        "алгоритмами TikTok",
-        "Гугл-переводчиком"
-      ];
+        /**
+         * Обновляет цифровые часы каждую секунду.
+         */
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
 
-      const locations = [
-        "в Подмосковье",
-        "на Марсе",
-        "в супермаркете 'Пятёрочка'",
-        "в Цюрихе",
-        "у вас дома",
-        "в подвале у бабушки",
-        "в штаб-квартире ООН",
-        "на дне океана"
-      ];
+        /**
+         * Обрабатывает окончание видео (onended).
+         * По умолчанию возвращает пользователя к таймеру.
+         */
+        function handleVideoEnd() {
+            if (REDIRECT_AFTER_VIDEO) {
+                // Если указана внешняя ссылка, перенаправляем
+                window.location.href = REDIRECT_AFTER_VIDEO;
+            } else {
+                // По умолчанию: возвращаемся к таймеру ("та страница")
+                
+                // 1. Остановить видео и сбросить на начало
+                secretVideo.pause();
+                secretVideo.currentTime = 0; 
 
-      const absurdDetails = [
-        "после того как научились готовить пельмени",
-        "благодаря хз чему",
-        "в рамках борьбы за права обуви",
-        "после получения докторской степени в MIT",
-        "после того как начали вещать на FM-волне",
-        "в ответ на повышение цен на носки"
-      ];
+                // 2. Скрыть видео и показать таймер
+                videoContainer.classList.add('hidden');
+                clockContainer.classList.remove('hidden');
+                console.log("Видео закончилось. Возврат к таймеру.");
+            }
+        }
 
-      const subject = subjects[Math.floor(Math.random() * subjects.length)];
-      const verb = verbs[Math.floor(Math.random() * verbs.length)];
-      const object = objects[Math.floor(Math.random() * objects.length)];
-      const location = locations[Math.floor(Math.random() * locations.length)];
-      const detail = absurdDetails[Math.floor(Math.random() * absurdDetails.length)];
 
-      return `Новости HARE TV сообщает: ${subject} ${verb} ${object} ${location} ${detail}!`;
-    }
+        /**
+         * Показывает видео и скрывает часы.
+         */
+        function showVideo() {
+            console.log("Секретное видео активировано.");
 
-    // Генерируем новость при загрузке
-    document.getElementById('news-ticker').textContent = generateAbsurdNews();
+            // 1. Выбираем случайное видео
+            const randomIndex = Math.floor(Math.random() * VIDEO_SOURCES.length);
+            const selectedVideoUrl = VIDEO_SOURCES[randomIndex];
+            
+            // 2. Устанавливаем и загружаем новый источник видео
+            secretVideo.src = selectedVideoUrl;
+            secretVideo.load();
 
-    // === Часы по Московскому времени ===
-    function updateMoscowTime() {
-      const now = new Date();
-      const options = {
-        timeZone: 'Europe/Moscow',
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      };
-      const moscowTime = new Intl.DateTimeFormat('ru-RU', options).format(now);
-      document.getElementById('clock').textContent = moscowTime;
-    }
-    updateMoscowTime();
-    setInterval(updateMoscowTime, 1000);
+            // 3. Скрыть контейнер часов 
+            clockContainer.classList.add('hidden');
+            
+            // 4. Показать контейнер видео
+            videoContainer.classList.remove('hidden');
+            
+            // 5. Устанавливаем обработчик события 'ended'
+            // Когда видео закончится, вызывается функция handleVideoEnd
+            secretVideo.onended = handleVideoEnd;
 
-    // === Видео каждые 15–60 минут ===
-    const videos = [
-      'videos/myvideo.mp4',
-      'videos/video2.mp4',
-      'videos/video3.mp4'
-    ];
+            // 6. Запустить воспроизведение видео
+            secretVideo.play().catch(error => {
+                // Если автозапуск не сработал (из-за правил браузера), выводим ошибку в консоль.
+                console.error("Ошибка воспроизведения видео. Возможно, браузер требует дополнительного взаимодействия:", error);
+                
+                // Чтобы видео можно было запустить вручную, временно показываем контролы
+                secretVideo.controls = true; 
+            });
+        }
 
-    function playRandomVideo() {
-      const video = document.createElement('video');
-      video.controls = false;
-      video.muted = true;
-      video.loop = false;
-      video.style.position = 'fixed';
-      video.style.top = '0';
-      video.style.left = '0';
-      video.style.width = '100%';
-      video.style.height = '100%';
-      video.style.zIndex = '10000';
-      video.style.objectFit = 'cover';
+        /**
+         * Инициализация приложения при загрузке страницы.
+         */
+        window.onload = function() {
+            // Устанавливаем часы сразу и начинаем обновление
+            updateClock();
+            setInterval(updateClock, 1000);
 
-      const randomVideo = videos[Math.floor(Math.random() * videos.length)];
-      video.src = new URL(randomVideo, window.location.origin).href;
+            console.log("Сайт готов. Таймер запущен. Доступно " + VIDEO_SOURCES.length + " видео.");
+        };
+    </script>
+</body>
+</html>
 
-      document.body.appendChild(video);
-
-      video.play().catch(e => console.warn("Автовоспроизведение заблокировано:", e));
-
-      video.onended = () => {
-        document.body.removeChild(video);
-      };
-    }
-
-    function scheduleNextVideo() {
-      const min = 15 * 60 * 1000;
-      const max = 60 * 60 * 1000;
-      const delay = Math.floor(Math.random() * (max - min + 1)) + min;
-
-      setTimeout(() => {
-        playRandomVideo();
-        scheduleNextVideo();
-      }, delay);
-    }
-
-    scheduleNextVideo();
   </script>
 
 </body>
