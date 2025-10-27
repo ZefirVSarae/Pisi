@@ -62,7 +62,6 @@
 
   <div id="news-ticker-container">
     <div id="news-ticker">Загрузка новостей...</div>
-    <div id="audio-container" style="display: none;"></div>
   </div>
 
   <script>
@@ -151,78 +150,36 @@
     updateMoscowTime();
     setInterval(updateMoscowTime, 1000);
 
-    // === Видео и Аудио каждые 15–60 минут ===
-    // *** ИЗМЕНИТЕ ЭТИ ИМЕНА ФАЙЛОВ на те, что у вас в папке 'videos/' ***
+    // === Видео каждые 15–60 минут ===
     const videos = [
-      'videos/video_file_1.mp4',
-      'videos/video_file_2.mp4',
-      'videos/my_epic_clip.mp4', // Пример .mp4
-      'videos/audio_track_1.mp3', // Пример .mp3
-      'videos/music_jingle.mp3' // Еще один пример .mp3
+      'videos/myvideo.mp4',
+      'videos/video2.mp4',
+      'videos/video3.mp4'
     ];
 
-    // Глобальная переменная для отслеживания текущего медиаэлемента
-    let currentMediaElement = null;
-
     function playRandomVideo() {
-      // Удаляем предыдущий элемент, если он есть
-      if (currentMediaElement && document.body.contains(currentMediaElement)) {
-        document.body.removeChild(currentMediaElement);
-      }
+      const video = document.createElement('video');
+      video.controls = false;
+      video.muted = true;
+      video.loop = false;
+      video.style.position = 'fixed';
+      video.style.top = '0';
+      video.style.left = '0';
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.zIndex = '10000';
+      video.style.objectFit = 'cover';
 
-      const randomMedia = videos[Math.floor(Math.random() * videos.length)];
-      
-      // Проверка, является ли файл аудио (.mp3)
-      const isAudio = randomMedia.toLowerCase().endsWith('.mp3'); 
-      
-      // Используем тег <video> для .mp4 и тег <audio> для .mp3
-      const mediaElement = document.createElement(isAudio ? 'audio' : 'video');
-      currentMediaElement = mediaElement;
+      const randomVideo = videos[Math.floor(Math.random() * videos.length)];
+      video.src = new URL(randomVideo, window.location.origin).href;
 
-      mediaElement.controls = false;
-      mediaElement.muted = false; // Разрешаем звук по умолчанию
-      mediaElement.loop = false;
-      mediaElement.src = randomMedia;
+      document.body.appendChild(video);
 
-      // Стилизация для ВИДЕО (.mp4)
-      if (!isAudio) {
-        mediaElement.style.position = 'fixed';
-        mediaElement.style.top = '0';
-        mediaElement.style.left = '0';
-        mediaElement.style.width = '100%';
-        mediaElement.style.height = '100%';
-        mediaElement.style.zIndex = '10000'; // Поверх всего
-        mediaElement.style.objectFit = 'cover';
-        document.body.appendChild(mediaElement); // Добавляем в тело
-      } else {
-        // Для АУДИО (.mp3)
-        // Аудио будет невидимым, но будет проигрываться
-        mediaElement.style.display = 'none';
-        document.body.appendChild(mediaElement); // Добавляем в тело
-      }
+      video.play().catch(e => console.warn("Автовоспроизведение заблокировано:", e));
 
-
-      // Обработчик ошибок загрузки
-      mediaElement.onerror = () => {
-        console.error(`❌ Ошибка загрузки медиафайла: ${randomMedia}. Проверьте правильность пути и наличие файла.`);
-        if(document.body.contains(mediaElement)) {
-          document.body.removeChild(mediaElement);
-          currentMediaElement = null;
-        }
+      video.onended = () => {
+        document.body.removeChild(video);
       };
-
-      // Логика завершения: удаляем элемент, когда проигрывание закончилось
-      mediaElement.onended = () => {
-        if(document.body.contains(mediaElement)) {
-          document.body.removeChild(mediaElement);
-          currentMediaElement = null;
-        }
-      };
-
-      // Запускаем воспроизведение
-      mediaElement.play().catch(e => {
-        console.warn(`Автовоспроизведение "${randomMedia}" заблокировано браузером (Autoplay Policy) или другая ошибка. Попробуйте кликнуть по странице, чтобы запустить.`, e);
-      });
     }
 
     function scheduleNextVideo() {
@@ -240,4 +197,4 @@
   </script>
 
 </body>
-</html>
+</html> исправь что видио нету (на гитхабе есть папка videos с видио)
