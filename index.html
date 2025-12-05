@@ -55,7 +55,10 @@
             "https://www.dropbox.com/scl/fi/yzegvcel7xu19t8f3dbpb/Purple-Hare-13.mp4?rlkey=7gntat0h9x8uwburs5k3ykyxz&st=298s8mod&dl=1",
             "https://www.dropbox.com/scl/fi/o55jndrit09yyywny5y28/purple-hare-10.mp4?rlkey=mbt1tx08ik1zlk9224u0rmyqc&st=r5t714oo&dl=1",
             "https://www.dropbox.com/scl/fi/0uvbqjkmlb1y5q2rop41i/Purple-Hare-15.mp4?rlkey=jkw28zo6x5mls22kdp8lmpyrl&st=1if6yudd&dl=1",
-            "https://www.dropbox.com/scl/fi/naz5jyqtosyznb2yt19b6/purple-hare-7.mp4?rlkey=6trhwzw8guubkgfy8nf97kesf&st=qnp5sauf&dl=1"
+            "https://www.dropbox.com/scl/fi/naz5jyqtosyznb2yt19b6/purple-hare-7.mp4?rlkey=6trhwzw8guubkgfy8nf97kesf&st=qnp5sauf&dl=1",
+            // ДОБАВЛЕННЫЕ СЕРИИ
+            "https://www.dropbox.com/scl/fi/g04r3z69tsiad3cavnjkf/purple-hare-9.mp4?rlkey=wyfzef7fca2jw5c61cenu4pj1&st=bmjncap7&dl=1",
+            "https://www.dropbox.com/scl/fi/rxwewzmvw4f3ymvzqsmcf/purple-hare-16-part-1.mp4?rlkey=ez51o4q83kyfyqo5dd0epi8vo&st=7cj9v4ix&dl=1"
         ];
         
         // Если вы хотите, чтобы после видео происходило перенаправление на другую внешнюю страницу,
@@ -73,7 +76,6 @@
 
         /**
          * Обновляет цифровые часы каждую секунду.
-         * ЭТА ФУНКЦИЯ БОЛЬШЕ НЕ НУЖНА, но я оставил ее закомментированной для справки.
          */
         /*
         function updateClock() {
@@ -87,14 +89,14 @@
 
         /**
          * Обрабатывает окончание видео (onended).
-         * По умолчанию возвращает пользователя к таймеру.
+         * По умолчанию возвращает пользователя к тексту.
          */
         function handleVideoEnd() {
             if (REDIRECT_AFTER_VIDEO) {
                 // Если указана внешняя ссылка, перенаправляем
                 window.location.href = REDIRECT_AFTER_VIDEO;
             } else {
-                // По умолчанию: возвращаемся к таймеру ("та страница")
+                // По умолчанию: возвращаемся к тексту-заставке
                 
                 // 1. Остановить видео и сбросить на начало
                 secretVideo.pause();
@@ -146,9 +148,6 @@
          * Инициализация приложения при загрузке страницы.
          */
         window.onload = function() {
-            // Удалена логика обновления таймера (setInterval(updateClock, 1000);)
-            // и начального вызова updateClock().
-            
             console.log("Сайт готов. Текст-заставка установлен. Доступно " + VIDEO_SOURCES.length + " видео.");
         };
     </script>
