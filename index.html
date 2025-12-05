@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Таймер со Скрытым Видео (Случайный Выбор)</title>
-    <!-- Загрузка Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=700&display=swap" rel="stylesheet">
     <style>
         /* Стиль для эффекта свечения, как на вашем изображении */
         .glow-text {
@@ -23,34 +22,26 @@
 </head>
 <body class="purple-gradient min-h-screen flex flex-col items-center justify-center p-4 relative">
 
-    <!-- Скрытый контейнер для видео. Занимает весь экран. -->
-    <!-- Класс 'hidden' скрывает его по умолчанию -->
     <div id="video-container" 
-         class="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black z-10 hidden">
+        class="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black z-10 hidden">
         
-        <!-- Видео элемент: controls убраны, чтобы не было видно элементов управления. -->
-        <!-- object-cover и w-full h-full гарантируют, что видео займет весь экран. -->
-        <!-- Атрибут 'src' будет установлен динамически через JavaScript -->
         <video id="secret-video" 
-               class="object-cover w-full h-full" 
-               playsinline 
-               type="video/mp4">
+                class="object-cover w-full h-full" 
+                playsinline 
+                type="video/mp4">
             Ваш браузер не поддерживает тег video.
         </video>
         
     </div>
 
-    <!-- Главный контейнер для часов -->
     <div id="clock-container" class="text-center transition-opacity duration-300 z-0">
-        <!-- Цифровые часы -->
-        <div id="clock" class="glow-text text-white text-6xl sm:text-8xl md:text-9xl font-bold">
-            00:00:00
+        <div id="clock" class="glow-text text-white text-3xl sm:text-5xl md:text-6xl font-bold p-4">
+            Серия скоро начнется! Не переключайтесь!
         </div>
 
-        <!-- Невидимая кнопка / Область нажатия -->
         <div id="hidden-button" 
-             class="w-full max-w-lg h-24 mt-8 cursor-pointer" 
-             onclick="showVideo()">
+                class="w-full max-w-lg h-24 mt-8 cursor-pointer" 
+                onclick="showVideo()">
         </div>
     </div>
 
@@ -82,7 +73,9 @@
 
         /**
          * Обновляет цифровые часы каждую секунду.
+         * ЭТА ФУНКЦИЯ БОЛЬШЕ НЕ НУЖНА, но я оставил ее закомментированной для справки.
          */
+        /*
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -90,6 +83,7 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             clockElement.textContent = `${hours}:${minutes}:${seconds}`;
         }
+        */
 
         /**
          * Обрабатывает окончание видео (onended).
@@ -106,16 +100,16 @@
                 secretVideo.pause();
                 secretVideo.currentTime = 0; 
 
-                // 2. Скрыть видео и показать таймер
+                // 2. Скрыть видео и показать контейнер текста
                 videoContainer.classList.add('hidden');
                 clockContainer.classList.remove('hidden');
-                console.log("Видео закончилось. Возврат к таймеру.");
+                console.log("Видео закончилось. Возврат к тексту.");
             }
         }
 
 
         /**
-         * Показывает видео и скрывает часы.
+         * Показывает видео и скрывает часы/текст.
          */
         function showVideo() {
             console.log("Секретное видео активировано.");
@@ -128,7 +122,7 @@
             secretVideo.src = selectedVideoUrl;
             secretVideo.load();
 
-            // 3. Скрыть контейнер часов 
+            // 3. Скрыть контейнер часов/текста
             clockContainer.classList.add('hidden');
             
             // 4. Показать контейнер видео
@@ -152,17 +146,11 @@
          * Инициализация приложения при загрузке страницы.
          */
         window.onload = function() {
-            // Устанавливаем часы сразу и начинаем обновление
-            updateClock();
-            setInterval(updateClock, 1000);
-
-            console.log("Сайт готов. Таймер запущен. Доступно " + VIDEO_SOURCES.length + " видео.");
+            // Удалена логика обновления таймера (setInterval(updateClock, 1000);)
+            // и начального вызова updateClock().
+            
+            console.log("Сайт готов. Текст-заставка установлен. Доступно " + VIDEO_SOURCES.length + " видео.");
         };
     </script>
-</body>
-</html>
-
-  </script>
-
 </body>
 </html>
